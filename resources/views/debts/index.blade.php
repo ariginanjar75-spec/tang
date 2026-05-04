@@ -280,7 +280,7 @@
             </div>
 
             <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <div style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 0.5rem;">Total Sisa Saldo</div>
+                <div style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 0.5rem;">Total Sisa Hutang</div>
                 <div style="font-size: 2.5rem; font-weight: 700; color: #10b981;">Rp {{ number_format($debts->sum('remaining_balance'), 0) }}</div>
                 <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim);">Dikelola dengan Baik</div>
             </div>
