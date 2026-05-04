@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Memastikan path public mengarah ke lokasi yang benar di Vercel
+        $this->app->bind('path.public', function() {
+            return base_path('public');
+        });
     }
 }
