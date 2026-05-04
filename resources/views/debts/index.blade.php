@@ -565,6 +565,7 @@
         });
 
         function updatePreviews() {
+            if (!amountInput) return;
             const rawValue = amountInput.value.replace(/,/g, "");
             const amount = parseFloat(rawValue) || 0;
             
@@ -602,15 +603,18 @@
         }
 
         // Clean values before form submit
-        document.getElementById('debtForm').addEventListener('submit', function() {
-            amountInput.value = amountInput.value.replace(/,/g, "");
-        });
+        if (document.getElementById('debtForm')) {
+            document.getElementById('debtForm').addEventListener('submit', function() {
+                if (amountInput) amountInput.value = amountInput.value.replace(/,/g, "");
+            });
+        }
 
         document.querySelectorAll('.repayment-form, .debt-edit-form, .topup-form').forEach(form => {
             form.addEventListener('submit', function() {
                 const amountInput = this.querySelector('input[name="amount"], input[name="total_amount"], input[name="additional_amount"]');
                 if (amountInput) {
-                    amountInput.value = amountInput.value.replace(/,/g, "");
+                    // Remove anything that is not a digit (including commas, dots, and spaces)
+                    amountInput.value = amountInput.value.replace(/\D/g, "");
                 }
             });
         });

@@ -302,7 +302,8 @@
         }
 
         document.getElementById('debtForm').addEventListener('submit', function() {
-            amountInput.value = amountInput.value.replace(/,/g, "");
+            // Remove anything that is not a digit
+            amountInput.value = amountInput.value.replace(/\D/g, "");
         });
     </script>
 </body>

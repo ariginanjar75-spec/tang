@@ -10,6 +10,8 @@ class RepaymentController extends Controller
 {
     public function store(Request $request, Debt $debt)
     {
+        $request->merge(['amount' => str_replace(',', '', $request->amount)]);
+
         $request->validate([
             'amount' => 'required|numeric|min:0.01|max:' . $debt->remaining_balance,
             'payment_date' => 'required|date',
@@ -23,6 +25,8 @@ class RepaymentController extends Controller
 
     public function update(Request $request, Repayment $repayment)
     {
+        $request->merge(['amount' => str_replace(',', '', $request->amount)]);
+        
         $debt = $repayment->debt;
         $maxAmount = $debt->total_amount - ($debt->repayments()->sum('amount') - $repayment->amount);
 

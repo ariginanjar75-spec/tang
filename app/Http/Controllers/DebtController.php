@@ -20,6 +20,11 @@ class DebtController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'total_amount' => str_replace(',', '', $request->total_amount),
+            'monthly_installment' => str_replace(',', '', $request->monthly_installment),
+        ]);
+
         $request->validate([
             'description' => 'required|string|max:255',
             'total_amount' => 'required|numeric|min:0',
@@ -34,6 +39,10 @@ class DebtController extends Controller
 
     public function update(Request $request, Debt $debt)
     {
+        $request->merge([
+            'total_amount' => str_replace(',', '', $request->total_amount),
+        ]);
+
         $request->validate([
             'description' => 'required|string|max:255',
             'total_amount' => 'required|numeric|min:0',
@@ -50,6 +59,10 @@ class DebtController extends Controller
 
     public function topUp(Request $request, Debt $debt)
     {
+        $request->merge([
+            'additional_amount' => str_replace(',', '', $request->additional_amount),
+        ]);
+
         $request->validate([
             'additional_amount' => 'required|numeric|min:0',
         ]);
