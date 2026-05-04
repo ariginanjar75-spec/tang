@@ -1,4 +1,7 @@
 <?php
 
-// Masuk ke folder public dan jalankan index.php bawaan Laravel
+// Memastikan autoload terpanggil dengan benar dari root
+require __DIR__ . '/../vendor/autoload.php';
+
+// Jalankan index.php utama Laravel
 require __DIR__ . '/../public/index.php';
