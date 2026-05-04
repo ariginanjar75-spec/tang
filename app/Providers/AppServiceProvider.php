@@ -29,6 +29,10 @@ class AppServiceProvider extends ServiceProvider
             // Alihkan view cache ke /tmp
             config(['view.compiled' => '/tmp/storage/framework/views']);
             
+            // Gunakan cookie untuk session dan array untuk cache agar tidak menulis ke file
+            config(['session.driver' => 'cookie']);
+            config(['cache.default' => 'array']);
+            
             // Buat folder jika belum ada
             if (!is_dir('/tmp/storage/framework/views')) {
                 mkdir('/tmp/storage/framework/views', 0755, true);
