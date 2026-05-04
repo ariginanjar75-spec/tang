@@ -251,6 +251,9 @@
         <header>
             <h1>Debt Tracker</h1>
             <p class="subtitle">Calculated according to your needs</p>
+            <div style="margin-top: 2rem;">
+                <a href="{{ route('debts.create') }}" class="btn" style="display: inline-block; width: auto; padding: 0.75rem 2rem; text-decoration: none;">+ Tambah Utang Baru</a>
+            </div>
         </header>
 
         @if(session('success'))
@@ -270,52 +273,16 @@
         @endif
 
         <div class="grid">
-            <div class="card">
-                <form action="{{ route('debts.store') }}" method="POST" id="debtForm">
-                    @csrf
-                    <div class="form-group">
-                        <label for="description">Keterangan Hutang</label>
-                        <input type="text" name="description" id="description" placeholder="e.g. Pinjaman Bank" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="total_amount">Total Hutang</label>
-                        <input type="text" name="total_amount" id="total_amount" data-type="currency" placeholder="0" required>
-                    </div>
-
-                    <label>Pilih Tenor (Yang harus dibayar)</label>
-                    <div class="installment-preview" id="previewGrid">
-                        <div class="preview-item" data-tenor="3" onclick="selectTenor(3)">
-                            <div class="preview-label">3 Bulan</div>
-                            <div class="preview-value" id="val-3">Rp 0</div>
-                        </div>
-                        <div class="preview-item" data-tenor="6" onclick="selectTenor(6)">
-                            <div class="preview-label">6 Bulan</div>
-                            <div class="preview-value" id="val-6">Rp 0</div>
-                        </div>
-                        <div class="preview-item" data-tenor="8" onclick="selectTenor(8)">
-                            <div class="preview-label">8 Bulan</div>
-                            <div class="preview-value" id="val-8">Rp 0</div>
-                        </div>
-                        <div class="preview-item" data-tenor="12" onclick="selectTenor(12)">
-                            <div class="preview-label">12 Bulan</div>
-                            <div class="preview-value" id="val-12">Rp 0</div>
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="selected_tenor" id="selected_tenor" required>
-                    <input type="hidden" name="monthly_installment" id="monthly_installment" required>
-
-                    <button type="submit" class="btn" id="submitBtn" disabled>Simpan Hutang</button>
-                </form>
+            <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 0.5rem;">Total Keseluruhan Hutang</div>
+                <div style="font-size: 2.5rem; font-weight: 700; color: var(--text);">Rp {{ number_format($debts->sum('total_amount'), 0) }}</div>
+                <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--accent);">{{ $debts->count() }} Record(s)</div>
             </div>
 
-            <div class="debt-summary">
-                <div class="card" style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                    <div style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;">📊</div>
-                    <h2 style="margin-bottom: 1rem;">Live Preview</h2>
-                    <p style="color: var(--text-dim);">Input your debt amount to see monthly repayment options across different tenors.</p>
-                </div>
+            <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 0.5rem;">Total Sisa Saldo</div>
+                <div style="font-size: 2.5rem; font-weight: 700; color: #10b981;">Rp {{ number_format($debts->sum('remaining_balance'), 0) }}</div>
+                <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim);">Dikelola dengan Baik</div>
             </div>
         </div>
 
@@ -346,7 +313,13 @@
                                 <div class="amount-monthly">Rp {{ number_format($debt->monthly_installment, 2) }} / bln</div>
                             </div>
                             
-                            <button type="button" class="edit-btn" onclick="toggleEditDebt({{ $debt->id }})">
+                            <button type="button" class="edit-btn" style="color: var(--accent);" onclick="toggleTopUpDebt({{ $debt->id }})" title="Tambah Saldo Utang">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                            </button>
+
+                            <button type="button" class="edit-btn" onclick="toggleEditDebt({{ $debt->id }})" title="Edit Detail">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
                                     <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
                                 </svg>
@@ -363,6 +336,24 @@
                                 </button>
                             </form>
                         </div>
+                    </div>
+
+                    <!-- Top Up Debt Form (Hidden by default) -->
+                    <div id="topup-debt-container-{{ $debt->id }}" style="display: none; margin-bottom: 1rem; background: rgba(34, 211, 238, 0.05); padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--accent);">
+                        <form action="{{ route('debts.topUp', $debt->id) }}" method="POST" class="topup-form">
+                            @csrf
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                <div>
+                                    <label style="font-size: 0.8rem; margin-bottom: 0.3rem;">Tambah Saldo Utang (Top Up)</label>
+                                    <input type="text" name="additional_amount" data-type="currency" placeholder="Masukkan jumlah tambahan" required>
+                                    <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem;">Jumlah ini akan ditambahkan ke total utang saat ini.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                <button type="button" class="btn" style="width: auto; margin-top: 0; padding: 0.5rem 1.5rem; background: var(--text-dim);" onclick="toggleTopUpDebt({{ $debt->id }})">Batal</button>
+                                <button type="submit" class="btn" style="width: auto; margin-top: 0; padding: 0.5rem 1.5rem; background: var(--accent); color: var(--bg);">Tambah Saldo</button>
+                            </div>
+                        </form>
                     </div>
 
                     <!-- Edit Debt Form (Hidden by default) -->
@@ -522,12 +513,29 @@
         function toggleEditDebt(id) {
             const infoRow = document.getElementById(`debt-info-${id}`);
             const editContainer = document.getElementById(`edit-debt-container-${id}`);
+            const topupContainer = document.getElementById(`topup-debt-container-${id}`);
             
+            topupContainer.style.display = 'none'; // Close other
             if (editContainer.style.display === 'none') {
                 editContainer.style.display = 'block';
                 infoRow.style.display = 'none';
             } else {
                 editContainer.style.display = 'none';
+                infoRow.style.display = 'flex';
+            }
+        }
+
+        function toggleTopUpDebt(id) {
+            const infoRow = document.getElementById(`debt-info-${id}`);
+            const topupContainer = document.getElementById(`topup-debt-container-${id}`);
+            const editContainer = document.getElementById(`edit-debt-container-${id}`);
+            
+            editContainer.style.display = 'none'; // Close other
+            if (topupContainer.style.display === 'none') {
+                topupContainer.style.display = 'block';
+                infoRow.style.display = 'none';
+            } else {
+                topupContainer.style.display = 'none';
                 infoRow.style.display = 'flex';
             }
         }
@@ -598,9 +606,9 @@
             amountInput.value = amountInput.value.replace(/,/g, "");
         });
 
-        document.querySelectorAll('.repayment-form, .debt-edit-form').forEach(form => {
+        document.querySelectorAll('.repayment-form, .debt-edit-form, .topup-form').forEach(form => {
             form.addEventListener('submit', function() {
-                const amountInput = this.querySelector('input[name="amount"], input[name="total_amount"]');
+                const amountInput = this.querySelector('input[name="amount"], input[name="total_amount"], input[name="additional_amount"]');
                 if (amountInput) {
                     amountInput.value = amountInput.value.replace(/,/g, "");
                 }

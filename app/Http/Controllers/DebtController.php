@@ -13,6 +13,11 @@ class DebtController extends Controller
         return view('debts.index', compact('debts'));
     }
 
+    public function create()
+    {
+        return view('debts.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -24,7 +29,7 @@ class DebtController extends Controller
 
         Debt::create($request->all());
 
-        return redirect()->back()->with('success', 'Debt recorded successfully!');
+        return redirect()->route('debts.index')->with('success', 'Debt recorded successfully!');
     }
 
     public function update(Request $request, Debt $debt)
@@ -41,6 +46,22 @@ class DebtController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Debt updated successfully!');
+    }
+
+    public function topUp(Request $request, Debt $debt)
+    {
+        $request->validate([
+            'additional_amount' => 'required|numeric|min:0',
+        ]);
+
+        $newTotal = $debt->total_amount + $request->additional_amount;
+        
+        $debt->update([
+            'total_amount' => $newTotal,
+            'monthly_installment' => $newTotal / $debt->selected_tenor,
+        ]);
+
+        return redirect()->back()->with('success', 'Debt topped up successfully!');
     }
 
     public function destroy(Debt $debt)
