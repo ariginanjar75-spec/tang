@@ -23,5 +23,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('path.public', function() {
             return base_path('public');
         });
+
+        // Konfigurasi khusus Vercel untuk sistem file read-only
+        if (env('VERCEL')) {
+            // Alihkan view cache ke /tmp
+            config(['view.compiled' => '/tmp/storage/framework/views']);
+            
+            // Buat folder jika belum ada
+            if (!is_dir('/tmp/storage/framework/views')) {
+                mkdir('/tmp/storage/framework/views', 0755, true);
+            }
+        }
     }
 }
